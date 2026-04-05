@@ -1,10 +1,19 @@
-import { PrismaClient } from "@prisma/client";
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
 
-declare global {
-    var prisma: PrismaClient  | undefined;
-}
-export const db = global.prisma || new PrismaClient();
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-if (process.env.NODE_ENV !== "production") {
-    global.prisma = db;
+const connectionString = process.env.DATABASE_URL;
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+
+// This setup bypasses the Prisma binary engine issues on Windows
+export const db =
+  globalForPrisma.prisma ??
+  new PrismaClient({ adapter });
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = db;
 }
