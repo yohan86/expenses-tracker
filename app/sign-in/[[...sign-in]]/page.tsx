@@ -1,18 +1,11 @@
 "use client";
-import { SignIn, SignOutButton, useAuth } from '@clerk/nextjs'
+import { SignIn } from '@clerk/nextjs'
 
 export default function Page() {
-  const { isSignedIn} = useAuth();
+
   return (
-    <>
-      { isSignedIn ? (
-        <div>
-          <p>You are already signed in </p>
-          <SignOutButton>Sign Out</SignOutButton>
+     <div className="flex items-center justify-center min-h-screen">
+          <SignIn />
         </div>
-      ) : (
-        <SignIn />
-      )}
-    </>
   );
 }
